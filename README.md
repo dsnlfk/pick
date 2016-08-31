@@ -6,7 +6,7 @@
 
 ```
 npm install -g electron-packager
-npm install electron-prebuilt --save-dev
+npm install
 ```
 
 生成桌面App
