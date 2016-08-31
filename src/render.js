@@ -89,17 +89,17 @@ function render() {
     }
     upadeView(0);
     //下标操作
-    $('.bar-par ul input[type=text]').on('input', function() {
+    $('.bar-par ul input[type=text]').on('blur', function() {
         var idxCur = parseInt($(this.parentNode).attr('idx'));
         var idxVal = parseInt($(this).value());
         if (idxVal >= 0 && idxVal < len && idxVal !== idxCur) {
             idxsArr[idxCur] = idxVal;
-            upadeView(idxCur);
+            $(this).value(idxVal);
         } else {
             idxsArr[idxCur] = idxCur;
-            upadeView(idxCur);
             $(this).value('');
         }
+        upadeView(idxCur);
     });
     $('.bar-par ul li').on('click', function() {
         var idxCur = parseInt($(this).attr('idx'));
