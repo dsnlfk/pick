@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>设计师的调帧软件</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <div class="page-index">
+        <div class="big-show">
+            <img src="" alt="">
+            <div class="color">
+                <input type="checkout"/>
+                <label for=""></label>
+            </div>
+        </div>
+        <div class="prev"></div>
+        <div class="next"></div>
+        <ul class="btns">
+            <li class="desc">最后一帧下标：<span></span></li>
+            <li class="first">第一帧</li>
+            <li class="last">最后一帧</li>
+            <li class="play">播放</li>
+            <li class="fps">播放帧率
+                <input type="text"> 毫秒/帧</li>
+        </ul>
+        <div class="act-bar">
+            <dl class="tit">
+                <dt>下标:</dt>
+                <dd>替换:</dd>
+            </dl>
+            <div class="bar-par">
+                <ul></ul>
+            </div>
+        </div>
+        <div class="data">
+            <textarea class="t" readonly="readonly"></textarea>
+            <textarea class="d" readonly="readonly"></textarea>
+        </div>
+    </div>
+    <div id="holder">
+        请把文件夹拖进这里
+    </div>
+</body>
+<script>
+// You can also require other files to run in this process
+require('./query.js');
+require('./main.js');
+</script>
+
+</html>
+
+

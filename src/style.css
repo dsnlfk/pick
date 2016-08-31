@@ -1,0 +1,317 @@
+html,
+body,
+div,
+span,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+abbr,
+address,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+samp,
+small,
+strong,
+sub,
+sup,
+var,
+b,
+i,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    list-style: none;
+}
+
+body {
+    font-family: 'Microsoft YaHei', 'Myriad Set Pro', 'Lucida Grande', 'Hiragino Sans GB', 'Helvetica', 'Arial', 'sans-serif';
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    tap-highlight-color: transparent;
+    color: #666;
+    font-size: 14px;
+    background: #f9fdff;
+    padding-bottom: 60px;
+}
+
+article,
+section {
+    display: block;
+}
+
+img {
+    vertical-align: middle;
+    border: none;
+}
+
+input,
+button,
+select,
+textarea {
+    outline: none;
+}
+
+textarea {
+    resize: none;
+}
+
+#holder {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background: #4095ce;
+    width: 100%;
+    height: 100%;
+    color: #fff;
+    font-size: 18px;
+    text-align: center;
+    box-sizing: border-box;
+    text-align: center;
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    -webkit-box-pack: center;
+    -webkit-box-align: center;
+    -webkit-transition: height 0.3s;
+}
+
+#holder:hover {
+    border: 5px solid #ffff00;
+}
+
+#holder.sel {
+    height: 60px;
+}
+
+.big-show {
+    width: 300px;
+    height: 300px;
+    margin: 20px auto 10px;
+    border: 1px solid #4095ce;
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    -webkit-box-pack: center;
+    -webkit-box-align: center;
+}
+
+.big-show img {
+    display: inline-block;
+    margin: 0 auto;
+}
+
+.prev,
+.next {
+    position: absolute;
+    top: 100px;
+    width: 100px;
+    height: 100px;
+    background: #4095ce;
+    border-radius: 50px;
+    overflow: hidden;
+}
+
+.prev {
+    left: 20px;
+}
+
+.next {
+    right: 20px;
+}
+
+.prev:before,
+.next:before {
+    content: '';
+    position: absolute;
+    top: 28px;
+    left: 36px;
+    border: 1px solid #fff;
+    border-right: none;
+    border-bottom: none;
+    width: 40px;
+    height: 40px;
+    -webkit-transform: rotate(-45deg);
+}
+
+.next:before {
+    -webkit-transform: rotate(135deg);
+    left: 24px;
+}
+
+.prev.sel,
+.next.sel {
+    background: #c7c7c7;
+}
+
+.act-bar {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.act-bar ul {
+    overflow: hidden;
+    -webkit-transition: margin 0.1s;
+}
+
+.act-bar ul li {
+    padding: 2px 0 5px;
+    width: 100px;
+    float: left;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.act-bar ul li img {
+    display: block;
+    margin: 5px auto;
+}
+
+.act-bar ul li input[type=text] {
+    width: 30px;
+    text-align: center;
+}
+
+.act-bar ul li.sel {
+    border: 1px solid #4095ce;
+}
+
+.act-bar .bar-par {
+    overflow: hidden;
+    margin-left: 50px;
+    margin-right: 15px;
+    background: #e4f1f9;
+}
+
+.act-bar .tit {
+    font-size: 12px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin-left: 5px;
+    height: 100%;
+}
+
+.act-bar .tit dd {
+    position: absolute;
+    bottom: 5px;
+}
+
+.btns {
+    margin: 0 10px 10px 5px;
+}
+
+.btns li {
+    display: inline-block;
+    height: 24px;
+    padding: 0 5px;
+    margin-right: 10px;
+    color: #fff;
+    text-align: center;
+    line-height: 24px;
+    border-radius: 5px;
+    background: #4095ce;
+}
+
+.btns li:hover {
+    background: #2275ad;
+}
+
+.btns .desc,
+.btns .fps {
+    color: #666;
+    background: none;
+    padding-left: 0;
+}
+
+.btns .desc:hover,
+.btns .fps:hover {
+    background: none;
+}
+
+.btns .play {
+    margin-right: 3px;
+}
+
+.btns .fps {
+    font-size: 12px;
+}
+
+.btns .fps input {
+    width: 40px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.data {
+    overflow: hidden;
+    width: 620px;
+    margin: 0 auto 20px;
+}
+
+.data .t,
+.data .d {
+    width: 300px;
+    float: left;
+    border: 1px solid #4095ce;
+    box-sizing: border-box;
+    min-height: 300px;
+    word-wrap: break-word;
+    padding: 6px;
+    line-height: 24px;
+}
+
+.data .d {
+    margin-left: 20px;
+}
