@@ -18,11 +18,11 @@ holder.ondrop = function(e) {
     e.preventDefault();
     var files = e.dataTransfer.files;
     if (files.length > 1) {
-        render.render(getImgList(files));
+        rending(getImgList(files));
     } else {
         fs.readdir(files[0].path, function(err, imgs) {
             if (err) console.log(err);
-            render.render(getImgList(imgs, files[0].path));
+            rending(getImgList(imgs, files[0].path));
         });
     }
     return false;
@@ -37,4 +37,12 @@ function getImgList(files, path) {
         }
     }
     return imgList;
+}
+
+function rending(imgList) {
+    if (imgList.length > 0) {
+        render.render(imgList);
+    } else {
+        alert('你拖进来的不是图片!');
+    }
 }

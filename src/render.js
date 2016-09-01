@@ -3,7 +3,11 @@ var isInit = true;
 var sizeDef = 300;
 var isPlay = false;
 var time = 100;
-var imgList, idxsArr, img, len, tPlay, imgNew;
+var imgList, //图片资源：图片地址列表
+    idxArr, //整个展示列：长度对应imgList.length，值对应 imgList 下标
+    delArr, //长度对应imgList.length,值1/0表示是否删除
+    noDelIdxArr, //非删除idxArr下标数组
+    img, len, tActPlay, imgNew;
 
 exports.render = function(files) {
     imgList = files;
@@ -12,11 +16,14 @@ exports.render = function(files) {
             isInit = false;
             init();
         }
-        idxsArr = [];
+        idxArr = [];
+        delArr = [];
         for (var i = 0; i < imgList.length; i++) {
-            idxsArr.push(i);
+            idxArr.push(i);
+            delArr.push(1);
         }
-        len = idxsArr.length;
+        len = idxArr.length;
+        noDelIdxArr = getNoDelIdxArr();
         render();
     });
 };
@@ -26,10 +33,12 @@ function init() {
 
     //上一帧
     $('.prev').on('click', function() {
+        descPlay(false);
         prevNext();
     });
     //下一帧
     $('.next').on('click', function() {
+        descPlay(false);
         prevNext(true);
     });
 
@@ -55,17 +64,20 @@ function init() {
 
     //第一帧
     $('.btns .first').on('click', function() {
-        upadeView(0);
+        descPlay(false);
+        upadeView(noDelIdxArr[0]);
     });
     //最后一帧
     $('.btns .last').on('click', function() {
-        upadeView(len - 1);
+        descPlay(false);
+        upadeView(noDelIdxArr[noDelIdxArr.length - 1]);
     });
     //播放
     $('.btns .play').on('click', function() {
-        isPlay ? isPlay = false : isPlay = true;
-        clearTimeout(tPlay);
-        tPlay = setTimeout(play, 300);
+        isPlay = isPlay ? false : true;
+        descPlay(isPlay);
+        clearTimeout(tActPlay);
+        tActPlay = setTimeout(play, 300);
     });
     //修改帧率
     $('.btns .fps input').on('blur', function() {
@@ -85,30 +97,51 @@ function render() {
     //缩略图列表渲染
     $('.bar-par ul').empty().style('width:' + 100 * len + 'px');
     for (var i = 0; i < len; i++) {
-        $('.bar-par ul').append($('<li idx="' + i + '"><span>' + i + '</span><img style="' + (imgNew.isW ? 'width:100px;' : 'height:100px;') + '" src="' + imgList[i] + '" /><input type="text" /></li>'));
+        var html = [
+            '<li idx="' + i + '">',
+            '<span>' + i + '</span>',
+            '<img style="' + (imgNew.isW ? 'width:100px;' : 'height:100px;') + '" src="' + imgList[i] + '" />',
+            '<input type="text" />',
+            '<em data-del="1"></em>',
+            '</li>'
+        ].join('');
+        $('.bar-par ul').append($(html));
     }
     upadeView(0);
     //下标操作
     $('.bar-par ul input[type=text]').on('blur', function() {
-        var idxCur = parseInt($(this.parentNode).attr('idx'));
+        var idxCur = getIdxCur($(this.parentNode));
         var idxVal = parseInt($(this).value());
         if (idxVal >= 0 && idxVal < len && idxVal !== idxCur) {
-            idxsArr[idxCur] = idxVal;
+            idxArr[idxCur] = idxVal;
             $(this).value(idxVal);
         } else {
-            idxsArr[idxCur] = idxCur;
+            idxArr[idxCur] = idxCur;
             $(this).value('');
         }
         upadeView(idxCur);
     });
-    $('.bar-par ul li').on('click', function() {
-        var idxCur = parseInt($(this).attr('idx'));
+    $('.bar-par ul em').on('click', function() {
+        var del = parseInt($(this).attr('data-del'));
+        var idxCur = getIdxCur($(this.parentNode));
+        if (del) {
+            del = 0;
+            $(this.parentNode).addClass('del');
+        } else {
+            del = 1;
+            $(this.parentNode).removeClass('del');
+        }
+        $(this).attr('data-del', del);
+        delArr[idxCur] = del;
         upadeView(idxCur);
+        noDelIdxArr = getNoDelIdxArr();
+    });
+    $('.bar-par ul li').on('click', function() {
+        upadeView(getIdxCur($(this)));
     });
 
     //
-    isPlay = false;
-    descPlay(isPlay);
+    descPlay(false);
     $('.btns .desc span').html(len - 1);
     $('.btns .fps input').value(time);
     $('#holder').addClass('sel');
@@ -118,40 +151,32 @@ function render() {
 
 function prevNext(bo) {
     var idx = parseInt(img.attr('idx'));
-    if (bo) {
-        if (idx + 1 < len) {
-            upadeView(idx + 1);
-        }
-    } else {
-        if (idx - 1 > -1) {
-            upadeView(idx - 1);
-        }
+    var n = bo ? next(idx) : prev(idx);
+    if (n !== -1) {
+        upadeView(n);
     }
 }
 
 function upadeView(idx) {
-    img.attr('src', imgList[idxsArr[idx]]).attr('idx', idx);
+    img.attr('src', imgList[idxArr[idx]]).attr('idx', idx);
     $($('.bar-par ul li').removeClass('sel').els[idx]).addClass('sel');
-    $('.data .t').html(idxsArr.join(' , '));
+    $('.data .t').html(getNoDelIdxArr(true).join(' , '));
     $('.data .d').html(getImgsName());
     idx === 0 ? $('.prev').addClass('sel') : $('.prev').removeClass('sel');
     idx === len - 1 ? $('.next').addClass('sel') : $('.next').removeClass('sel');
     scrollUI();
 }
 
-function getShowIdx() {
-    return parseInt($('.big-show img').attr('idx'));
-}
 //获取所需图片名称
 function getImgsName() {
     var arrTemp = [];
     var str = '';
-    var arrSource = getNewArr(idxsArr).sort(sortNumber);
-    for (var i = 0; i < len; i++) {
+    var arrSource = getNoDelIdxArr(true).sort(sortNumber);
+    for (var i = 0; i < arrSource.length; i++) {
         if (arrTemp.indexOf(arrSource[i]) === -1) {
             var s = imgList[arrSource[i]];
             var idx = s.length - s.split('').reverse().join('').search(/\//);
-            str += (s.slice(idx) + (i < len - 1 ? '\r' : ''));
+            str += (s.slice(idx) + (i < arrSource.length - 1 ? '\r' : ''));
             arrTemp.push(arrSource[i]);
         }
     }
@@ -177,11 +202,11 @@ function scrollUI() {
 function play() {
     if (isPlay) {
         var idx = parseInt(img.attr('idx'));
-        if (idx === len - 1) {
-            upadeView(0);
+        if (idx === noDelIdxArr[noDelIdxArr.length - 1]) { //处于最后一帧
+            upadeView(idxArr[noDelIdxArr[0]]);
         } else {
-            if (idx === len - 2) {
-                isPlay = false;
+            if (idx === noDelIdxArr[noDelIdxArr.length - 2]) {
+                descPlay(false);
             }
             prevNext(true);
         }
@@ -191,16 +216,17 @@ function play() {
             }
         }, time);
     }
-    descPlay(isPlay);
 }
 
 function descPlay(bo) {
+    isPlay = bo;
     bo ? $('.btns .play').html('暂停') : $('.btns .play').html('播放');
 }
 
 function bigShow(imgObj) {
+    img.attr('width', 'auto').attr('height', 'auto');
     if (imgObj.hDef > sizeDef || imgObj.wDef > sizeDef) {
-        imgObj.isW ? img.attr('width', sizeDef).attr('height', 'auto') : img.attr('height', sizeDef).attr('width', 'auto');
+        imgObj.isW ? img.attr('width', sizeDef) : img.attr('height', sizeDef);
     }
 }
 
@@ -217,6 +243,41 @@ function getImgObj() {
     return i;
 }
 
+function getIdxCur($d) {
+    return parseInt($d.attr('idx'));
+}
+
+function getNoDelIdxArr(bo) {
+    arrNew = [];
+    for (var i = 0; i < len; i++) {
+        if (delArr[i]) {
+            if (bo) {
+                arrNew.push(idxArr[i]);
+            } else {
+                arrNew.push(i);
+            }
+        }
+    }
+    return arrNew;
+}
+
+function next(idx) {
+    for (var i = idx + 1; i < len; i++) {
+        if (delArr[i]) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+function prev(idx) {
+    for (var i = idx - 1; i > -1; i--) {
+        if (delArr[i]) {
+            return i;
+        }
+    }
+    return -1;
+}
 
 
 
@@ -224,12 +285,4 @@ function getImgObj() {
 //utils------------------
 function sortNumber(a, b) {
     return a - b;
-}
-
-function getNewArr(arr) {
-    arrNew = [];
-    for (var i = 0; i < arr.length; i++) {
-        arrNew.push(arr[i]);
-    }
-    return arrNew;
 }

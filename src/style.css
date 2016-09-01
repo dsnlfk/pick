@@ -262,6 +262,10 @@ textarea {
     text-align: center;
 }
 
+.act-bar ul li.sel {
+    border: 1px solid #4095ce;
+}
+
 .act-bar ul li img {
     display: block;
     margin: 5px auto;
@@ -272,8 +276,51 @@ textarea {
     text-align: center;
 }
 
-.act-bar ul li.sel {
-    border: 1px solid #4095ce;
+.act-bar ul li em {
+    position: relative;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-left: 5px;
+    background: #c30000;
+    vertical-align: middle;
+    border-radius: 8px;
+}
+
+.act-bar ul li em:before,
+.act-bar ul li em:after {
+    content: '';
+    position: absolute;
+    top: 7px;
+    left: 2px;
+    width: 11px;
+    height: 1px;
+    background: #fff;
+    -webkit-transform: rotate(45deg);
+}
+
+.act-bar ul li em:after {
+    -webkit-transform: rotate(135deg);
+}
+
+.act-bar ul li.del {
+    opacity: 0.5;
+}
+
+.act-bar ul li.del em {
+    background: #00eb00;
+}
+
+.act-bar ul li.del em:before {
+    -webkit-transform: rotate(0deg);
+    height: 3px;
+    top: 6px;
+    left: 3px;
+    width: 10px;
+}
+
+.act-bar ul li.del em:after {
+    display: none;
 }
 
 .act-bar .bar-par {
