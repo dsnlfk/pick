@@ -2,12 +2,13 @@ var resource = require('./resource');
 var isInit = true;
 var sizeDef = 300;
 var isPlay = false;
+var isLoop = false;
 var time = 100;
 var imgList, //图片资源：图片地址列表
     idxArr, //整个展示列：长度对应imgList.length，值对应 imgList 下标
     delArr, //长度对应imgList.length,值1/0表示是否删除
     noDelIdxArr, //非删除idxArr下标数组
-    img, len, tActPlay, imgNew;
+    img, len, tPlay, tActPlay, imgNew;
 
 exports.render = function(files) {
     imgList = files;
@@ -74,10 +75,11 @@ function init() {
     });
     //播放
     $('.btns .play').on('click', function() {
-        isPlay = isPlay ? false : true;
-        descPlay(isPlay);
-        clearTimeout(tActPlay);
-        tActPlay = setTimeout(play, 300);
+        actPlaying(parseInt($(this).attr('data-turn')));
+    });
+    //循环播放
+    $('.btns .loopPlay').on('click', function() {
+        actPlaying(parseInt($(this).attr('data-turn')), true);
     });
     //修改帧率
     $('.btns .fps input').on('blur', function() {
@@ -86,7 +88,6 @@ function init() {
         $(this).value(num);
         time = num;
     });
-
 }
 
 
@@ -137,6 +138,7 @@ function render() {
         noDelIdxArr = getNoDelIdxArr();
     });
     $('.bar-par ul li').on('click', function() {
+        descPlay(false);
         upadeView(getIdxCur($(this)));
     });
 
@@ -199,18 +201,28 @@ function scrollUI() {
     }
 }
 
+function actPlaying(trun, bo) {
+    var tn = trun ? false : true;
+    if (!(isPlay && tn)) {
+        clearTimeout(tActPlay);
+        clearTimeout(tPlay);
+        tActPlay = setTimeout(play, 300);
+    }
+    bo ? descPlay(tn, bo) : descPlay(tn);
+}
+
 function play() {
     if (isPlay) {
         var idx = parseInt(img.attr('idx'));
         if (idx === noDelIdxArr[noDelIdxArr.length - 1]) { //处于最后一帧
             upadeView(idxArr[noDelIdxArr[0]]);
         } else {
-            if (idx === noDelIdxArr[noDelIdxArr.length - 2]) {
+            if (idx === noDelIdxArr[noDelIdxArr.length - 2] && !isLoop) {
                 descPlay(false);
             }
             prevNext(true);
         }
-        setTimeout(function() {
+        tPlay = setTimeout(function() {
             if (isPlay) {
                 play();
             }
@@ -218,9 +230,30 @@ function play() {
     }
 }
 
-function descPlay(bo) {
+function descPlay(bo, loop) {
     isPlay = bo;
-    bo ? $('.btns .play').html('暂停') : $('.btns .play').html('播放');
+    isLoop = loop ? true : false;
+    if (bo) {
+        if (loop) {
+            $('.btns .loopPlay').addClass('sel').attr('data-turn', 1).html('循环暂停');
+            playTurnOff();
+        } else {
+            $('.btns .play').addClass('sel').attr('data-turn', 1).html('暂停');
+            loopPlayTurnOff();
+        }
+    } else {
+        playTurnOff();
+        loopPlayTurnOff();
+    }
+}
+
+function playTurnOff() {
+    $('.btns .play').removeClass('sel').attr('data-turn', 0).html('播放');
+
+}
+
+function loopPlayTurnOff() {
+    $('.btns .loopPlay').removeClass('sel').attr('data-turn', 0).html('循环播放');
 }
 
 function bigShow(imgObj) {

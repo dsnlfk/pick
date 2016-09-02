@@ -376,8 +376,13 @@ textarea {
     background: none;
 }
 
-.btns .play {
+.btns .loopPlay {
     margin-right: 3px;
+}
+
+.btns .play.sel,
+.btns .loopPlay.sel {
+    background: #c30000;
 }
 
 .btns .fps {
